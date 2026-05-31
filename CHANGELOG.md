@@ -1,5 +1,35 @@
 # CHANGELOG — DOSHorse_X86
 
+## v0.0.4-Felsenstein — 2026-06-01
+
+Cross-platform Makefile (Tracks B + C uit v0.0.6 combined-scope).
+
+### Toegevoegd in Makefile
+- **Platform-detection** via `UNAME_S` met `ifeq`/`ifneq`-takken:
+  - `Darwin` → `build-macos-sdl2` + brew-deps (bewezen)
+  - `Linux` → `build-sdl2` + apt-deps (Ubuntu/Debian)
+  - `MINGW*` / `MSYS*` / `CYGWIN*` → `build-mingw-sdl2` + pacman-deps (MSYS2)
+- **Platform-bewuste vars**: `BUILD_SCRIPT`, `BINARY_SRC` (`.exe` op Windows), `DEPS_TOOL`, `DEPS_LIST` per platform
+- **`platform-info` target** — print detected platform + script-keuze (diagnose)
+- **`deps-check` uitgebreid** — werkt nu voor brew/apt/pacman
+- **`build` target** — exit met fout op unsupported platform, helder error-bericht
+- Help-output toont nu platform-support-matrix (✓/⚠ per platform)
+
+### Bewezen
+- **macOS**: regression-getest, alle bestaande targets werken identiek aan v0.0.3 (platform-info → Darwin x86_64 → macOS → build-macos-sdl2; deps-check toont 10/10 ✓)
+
+### Niet getest (gedocumenteerd untested)
+- **Linux**: code-pad aanwezig, geen Linux-host beschikbaar in deze sessie. Apt-deps overgenomen uit dosbox-x' BUILD.md §"Ubuntu 20.04/20.10". Build-script `build-sdl2` bestaat in upstream.
+- **Windows MinGW**: code-pad aanwezig, geen Windows-host. Pacman-deps overgenomen uit dosbox-x' BUILD.md §MinGW. Build-script `build-mingw-sdl2` bestaat in upstream.
+
+### Codenaam-rationale
+**Felsenstein** = Lee Felsenstein (1976-1981) — ontwerper van de Osborne 1, de **eerste commercieel succesvolle portable computer**. Past bij cross-platform Makefile-uitbreiding: één codebase, meerdere targets, en Felsenstein bewees als eerste dat het kón.
+
+### Niet uitgevoerd (v0.0.7+)
+- Linux/Windows native build-test (vereist host of CI)
+- Universal binary macOS (vereist Apple Silicon host)
+- Eigen C-source koppeling met dosbox-x' internal state (huidige build gebruikt Core's API maar nog niet als runtime-link target)
+
 ## v0.0.3-Noyce — 2026-06-01
 
 Wrapper-pipeline uitgebreid met patch-applicatie (B: wrapper + branding-patch).

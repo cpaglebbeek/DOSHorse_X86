@@ -2,27 +2,31 @@
 
 > **v0.0.2-Sams** — eerste werkende build-wrapper (Approach A: wrapper-only, geen source-patches in dosbox-x). Source-branding (binary-naam in `--version`, `doshorse-x86` ipv `dosbox-x` intern) komt v0.0.5+ wanneer patch-discipline + Public API headers er zijn.
 
-## Status per platform (v0.0.2)
+## Status per platform (v0.0.4)
 
 | Platform | Status | Notitie |
 |---|---|---|
-| macOS Intel x86_64 | ✅ Werkt (bewezen v0.0.3 smoke-test) | `./build-macos-sdl2` via wrapper |
-| macOS Apple Silicon arm64 | ⏳ Verwacht-werkend, niet getest op host | Universal-binary vereist M-chip host (per upstream BUILD.md) |
-| Linux | ❌ Niet geïmplementeerd in Makefile | v0.0.3+ |
-| Windows | ❌ Niet geïmplementeerd in Makefile | v0.0.4+ |
+| macOS Intel x86_64 | ✅ Bewezen v0.0.3 + v0.0.5 smoke-tests | `./build-macos-sdl2`, ~10 min, binary 22 MB |
+| macOS Apple Silicon arm64 | ⏳ Code-pad aanwezig, niet getest op host | Universal-binary vereist M-chip host (per upstream BUILD.md) |
+| Linux Ubuntu/Debian | ⚠ Code-pad aanwezig (v0.0.4), niet lokaal getest | `./build-sdl2` + apt-deps; eerste lokale build verifieert |
+| Linux Fedora/RHEL | ⚠ Code-pad aanwezig (v0.0.4), niet lokaal getest | `./build-sdl2` + dnf-deps; zie §Fedora |
+| Windows MinGW (MSYS2) | ⚠ Code-pad aanwezig (v0.0.4), niet lokaal getest | `./build-mingw-sdl2` + pacman-deps; eerste lokale build verifieert |
+| Windows Visual Studio | ❌ Niet door Makefile gedekt | dosbox-x heeft `vs/` Visual Studio solution; gebruik die direct |
 
-## Quick-start (macOS)
+## Quick-start (alle platforms — Makefile detecteert automatisch)
 
 ```bash
-# Clone met submodules
+# Clone met submodules (3 niveaus: X86 → core → upstream/dosbox-x)
 git clone --recursive https://github.com/cpaglebbeek/DOSHorse_X86.git
 cd DOSHorse_X86
 
-# Check Homebrew deps
+# Toon wat de Makefile detecteert
+make platform-info
+
+# Check deps (brew/apt/pacman afhankelijk van host)
 make deps-check
 
-# Eventueel ontbrekende installeren
-brew install autoconf automake nasm glfw glew fluid-synth libslirp libpcap pkg-config sdl2_net
+# Install ontbrekende deps via je package-manager (zie §Per-platform deps)
 
 # Build + install + smoke-test
 make
@@ -32,7 +36,40 @@ Verwachte uitvoer eindigt met:
 ```
 ✓ Installed: dist/doshorse-x86 (22M)
 Smoke-test: dist/doshorse-x86 --version
+DOSHorse version 0.0.3-Canion (forked from upstream below)
 DOSBox-X version 2026.05.02 SDL2, ...
+```
+
+## Per-platform deps
+
+### macOS (Homebrew)
+```bash
+brew install autoconf automake nasm glfw glew fluid-synth libslirp libpcap pkg-config sdl2_net
+```
+
+### Linux Ubuntu/Debian (apt)
+```bash
+sudo apt install automake gcc g++ make libncurses-dev nasm \
+    libsdl-net1.2-dev libsdl2-net-dev libpcap-dev libslirp-dev \
+    fluidsynth libfluidsynth-dev libavformat-dev libavcodec-dev \
+    libswscale-dev libfreetype-dev libxkbfile-dev libxrandr-dev
+```
+
+### Linux Fedora/RHEL (dnf)
+```bash
+sudo dnf group install "C Development Tools and Libraries"
+sudo dnf install SDL_net-devel SDL2_net-devel libxkbfile-devel \
+    ncurses-devel libpcap-devel libslirp-devel libpng-devel \
+    fluidsynth-devel freetype-devel nasm
+```
+**Noot:** Op Fedora gebruikt de Makefile alleen `dpkg`-detectie voor `deps-check`; controleer handmatig of bovenstaande dnf-packages aanwezig zijn.
+
+### Windows MSYS2 + MinGW64 (pacman)
+```bash
+# In MSYS2 MinGW64-shell:
+pacman -S git make mingw-w64-x86_64-toolchain \
+    mingw-w64-x86_64-libslirp mingw-w64-x86_64-libtool \
+    mingw-w64-x86_64-nasm autoconf automake mingw-w64-x86_64-ncurses
 ```
 
 ## Makefile-targets
