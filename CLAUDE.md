@@ -13,5 +13,5 @@ v0.0.1 = Bradley. Pool: `Meta_DOSHorse/CLAUDE.md`.
 ## Regels
 
 - Build-output (binaries, installers) NIET committen — alleen build-scripts en config.
-- Release-binaries naar GitHub Releases (later: ook spiegel naar `horsecloud55.ddns.net/DOSHorse/downloads/x86/`).
+- Release-binaries naar GitHub Releases (later: ook spiegel naar `icthorsecloud.nl/DOSHorse/downloads/x86/`).
 - dosbox-x patches gaan in `DOSHorse_Core`, niet hier. Hier alleen X86-specifieke glue (packaging, installer-scripts, native UI).
